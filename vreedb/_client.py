@@ -1,6 +1,6 @@
 import urllib.parse
 import httpx
-from typing import Optional, Any, List, Union
+from typing import Optional, Any, List, Union, Dict
 
 
 class Client:
@@ -54,7 +54,8 @@ class Client:
         return await self._client.post('deletecollection',
                                        json={'api_key': self._api_key, 'collection_name': collection_name})
 
-    async def add_point(self, collection_name: str, vector: List[Union[int, float]], wait: bool) -> Any:
+    async def add_point(self, collection_name: str, vector: List[Union[int, float]], payload: Optional[Dict],
+                        wait: bool) -> Any:
         """
          Add a point to the collection
         :param collection_name: name of the collection
