@@ -60,11 +60,12 @@ class Client:
          Add a point to the collection
         :param collection_name: name of the collection
         :param vector: a vector as List
+        :param payload: the optional payload
         :param wait: wait for reply or not
         :return: collection dict
         """
         return await self._client.post('addpoint', json={'api_key': self._api_key, 'collection_name': collection_name,
-                                                         'vector': vector, 'wait': wait})
+                                                         'vector': vector, 'payload': payload, 'wait': wait})
 
 
 def _parse_host(host: Optional[str]) -> str:
