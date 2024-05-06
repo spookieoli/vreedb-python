@@ -15,14 +15,17 @@ class Client:
         self._client = httpx.AsyncClient(base_url=_parse_host(host), timeout=timeout)
         self._api_key = api_key
 
-    async def search(self, limit: Optional[int] = None, vector: List[Union[int, float]] = None) -> Any:
+    async def search(self, limit: Optional[int] = None, vector: List[Union[int, float]] = None,
+                     filter: List[Optional[Dict]] = None) -> Any:
         """
         Search for nearest neighbour in the Database
         :param limit: limit returned vectors
         :param vector: a vector as List
+        :param filter: a filter
         :return: nearest neighbour
         """
-        return await self._client.post('search', json={'api_key': self._api_key, 'limit': limit, 'vector': vector})
+        return await self._client.post('search', json={'api_key': self._api_key, 'limit': limit, 'vector': vector,
+                                                       'filter': filter})
 
     async def create_collection(self, collection_name: str, dist_func: str, dimensions: int) -> Any:
         """
