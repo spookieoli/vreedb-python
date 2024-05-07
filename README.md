@@ -30,10 +30,6 @@ It also has the following instance attributes:
 
 - `_client`: Stores the client instance for performing API operations.
 
-### Function `_parse_host`
-
-This helper function is used for parsing the host information.
-
 
 ## Installation
 
