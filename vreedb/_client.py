@@ -37,7 +37,7 @@ class Client:
         :return: collection dict
         """
         return await self._client.post('create_collection',
-                                       json={'api_key': self._api_key, 'collection_name': collection_name,
+                                       json={'api_key': self._api_key, 'name': collection_name,
                                              dist_func: dist_func,
                                              dimensions: dimensions})
 
@@ -71,14 +71,43 @@ class Client:
         return await self._client.post('addpoint', json={'api_key': self._api_key, 'collection_name': collection_name,
                                                          'vector': vector, 'payload': payload, 'wait': wait})
 
+    async def add_point_batch(self, collection_name: str, vectors: List[Union[int, float]],
+                              payloads: Optional[List[Dict]], ids: Optional[List[str]]) -> Any:
+        """
+        :param collection_name: A string representing the name of the collection where the points will be added.
+        :param vectors: A list of integers or floats representing the vectors of the points to be added.
+        :param payloads: An optional list of dictionaries representing the payloads associated with each point.
+        :param ids: An optional list of strings representing the IDs for each point.
+        :return: Returns the result of the API call.
+
+        """
+        points = []
+        for idx, v in enumerate(vectors):
+            points.append({'vector': v, 'id': ids[idx], 'payload': payloads[idx]})
+
+        return await self._client.post('addpointbatch',
+                                       json={'api_key': self._api_key, 'collection_name': collection_name,
+                                             'points': points})
+
+    async def classify(self, collection_name: str, classifier_name: str, vector: List[Union[int, float]]) -> Any:
+        """
+        :param collection_name: The name of the collection.
+        :param classifier_name: The name of the classifier.
+        :param vector: A list of numerical values representing the input vector to be classified.
+        :return: The result of the classification.
+        """
+        return await self._client.post('classify', json={'api_key': self._api_key, 'collection_name': collection_name,
+                                                         'classifier_name': classifier_name, 'vector': vector})
+
 
 def _parse_host(host: Optional[str]) -> str:
     """
-    Parses a given host
-    :param host: str
-    :return: parsed host
+        Parses the given host URL and returns the formatted URL string.
+        :param host: The host URL to parse.
+        :type host: Optional[str]
+        :return: The formatted URL string.
+        :rtype: str
     """
-
     host, port = host or '', 8080
     schema, _, hostandport = host.partition('://')
     if not hostandport:
