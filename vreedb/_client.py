@@ -12,23 +12,28 @@ class Client:
         """
 
         # create client
-        self._client = httpx.AsyncClient(base_url=_parse_host(host), timeout=timeout)
+        self._client = httpx.Client(base_url=_parse_host(host), timeout=timeout)
         self._api_key = api_key
 
-    async def search(self, limit: Optional[int] = None, vector: List[Union[int, float]] = None,
-                     filter: List[Optional[Dict]] = None, index: Optional[Dict] = None) -> Any:
+    def search(self, collection_name: str, limit: Optional[int] = None, vector: List[Union[int, float]] = None,
+               filter: List[Optional[Dict]] = None, index: Optional[Dict] = None) -> Any:
         """
-        Search for nearest neighbour in the Database
-        :param limit: limit returned vectors
-        :param vector: a vector as List
-        :param filter: a filter
-        :param index: a index
-        :return: nearest neighbour
-        """
-        return await self._client.post('search', json={'api_key': self._api_key, 'limit': limit, 'vector': vector,
-                                                       'filter': filter, 'index': index})
+        Perform a search operation with the specified parameters.
 
-    async def create_collection(self, collection_name: str, dist_func: str, dimensions: int) -> Any:
+        :param collection_name: The name of the collection to search in. (str)
+        :param limit: The maximum number of results to return. (Optional[int])
+        :param vector: The input vector for similarity search. (List[Union[int, float]])
+        :param filter: The filter conditions to apply to the search. (List[Optional[Dict]])
+        :param index: The index option to use for the search. (Optional[Dict])
+        :return: The search results. (Any)
+
+        """
+        return self._client.post('search',
+                                 json={'api_key': self._api_key, 'collection_name': collection_name, 'limit': limit,
+                                       'vector': vector,
+                                       'filter': filter, 'index': index}).json()
+
+    def create_collection(self, collection_name: str, dist_func: str, dimensions: int) -> Any:
         """
         Create a collection
         :param collection_name: a name for the collection
@@ -36,30 +41,30 @@ class Client:
         :param dimensions: number of dimensions
         :return: collection dict
         """
-        return await self._client.post('create_collection',
-                                       json={'api_key': self._api_key, 'name': collection_name,
-                                             dist_func: dist_func,
-                                             dimensions: dimensions})
+        return self._client.post('create_collection',
+                                 json={'api_key': self._api_key, 'name': collection_name,
+                                       dist_func: dist_func,
+                                       dimensions: dimensions}).json()
 
-    async def list_collections(self, collection_name: str) -> Any:
+    def list_collections(self, collection_name: str) -> Any:
         """
         Gets a collection info object
         :param collection_name: name of the collection
         :return: collection dict
         """
-        return await self._client.post('listcollections', json={'api_key': self._api_key})
+        return self._client.post('listcollections', json={'api_key': self._api_key}).json()
 
-    async def delete_collection(self, collection_name: str) -> Any:
+    def delete_collection(self, collection_name: str) -> Any:
         """
         Delete a collection
         :param collection_name: name of the collection
         :return: collection dict
         """
-        return await self._client.post('deletecollection',
-                                       json={'api_key': self._api_key, 'collection_name': collection_name})
+        return self._client.post('deletecollection',
+                                 json={'api_key': self._api_key, 'collection_name': collection_name}).json()
 
-    async def add_point(self, collection_name: str, vector: List[Union[int, float]], payload: Optional[Dict],
-                        wait: bool) -> Any:
+    def add_point(self, collection_name: str, vector: List[Union[int, float]], payload: Optional[Dict],
+                  wait: bool) -> Any:
         """
          Add a point to the collection
         :param collection_name: name of the collection
@@ -68,11 +73,11 @@ class Client:
         :param wait: wait for reply or not
         :return: collection dict
         """
-        return await self._client.post('addpoint', json={'api_key': self._api_key, 'collection_name': collection_name,
-                                                         'vector': vector, 'payload': payload, 'wait': wait})
+        return self._client.post('addpoint', json={'api_key': self._api_key, 'collection_name': collection_name,
+                                                   'vector': vector, 'payload': payload, 'wait': wait}).json()
 
-    async def add_point_batch(self, collection_name: str, vectors: List[Union[int, float]],
-                              payloads: Optional[List[Dict]], ids: Optional[List[str]]) -> Any:
+    def add_point_batch(self, collection_name: str, vectors: List[Union[int, float]],
+                        payloads: Optional[List[Dict]], ids: Optional[List[str]]) -> Any:
         """
         :param collection_name: A string representing the name of the collection where the points will be added.
         :param vectors: A list of integers or floats representing the vectors of the points to be added.
@@ -85,19 +90,19 @@ class Client:
         for idx, v in enumerate(vectors):
             points.append({'vector': v, 'id': ids[idx], 'payload': payloads[idx]})
 
-        return await self._client.post('addpointbatch',
-                                       json={'api_key': self._api_key, 'collection_name': collection_name,
-                                             'points': points})
+        return self._client.post('addpointbatch',
+                                 json={'api_key': self._api_key, 'collection_name': collection_name,
+                                       'points': points}).json()
 
-    async def classify(self, collection_name: str, classifier_name: str, vector: List[Union[int, float]]) -> Any:
+    def classify(self, collection_name: str, classifier_name: str, vector: List[Union[int, float]]) -> Any:
         """
         :param collection_name: The name of the collection.
         :param classifier_name: The name of the classifier.
         :param vector: A list of numerical values representing the input vector to be classified.
         :return: The result of the classification.
         """
-        return await self._client.post('classify', json={'api_key': self._api_key, 'collection_name': collection_name,
-                                                         'classifier_name': classifier_name, 'vector': vector})
+        return self._client.post('classify', json={'api_key': self._api_key, 'collection_name': collection_name,
+                                                   'classifier_name': classifier_name, 'vector': vector}).json()
 
 
 def _parse_host(host: Optional[str]) -> str:
