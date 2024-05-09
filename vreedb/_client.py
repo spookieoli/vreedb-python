@@ -16,7 +16,7 @@ class Client:
         self._api_key = api_key
 
     def search(self, collection_name: str, limit: Optional[int] = None, vector: List[Union[int, float]] = None,
-               filter: List[Optional[Dict]] = None, index: Optional[Dict] = None) -> Any:
+               filter: List[Optional[Dict]] = None, index: Optional[Dict] = None) -> str:
         """
         Perform a search operation with the specified parameters.
 
@@ -31,9 +31,9 @@ class Client:
         return self._client.post('search',
                                  json={'api_key': self._api_key, 'collection_name': collection_name, 'limit': limit,
                                        'vector': vector,
-                                       'filter': filter, 'index': index}).json()
+                                       'filter': filter, 'index': index}).text
 
-    def create_collection(self, collection_name: str, dist_func: str, dimensions: int) -> Any:
+    def create_collection(self, collection_name: str, dist_func: str, dimensions: int) -> str:
         """
         Create a collection
         :param collection_name: a name for the collection
@@ -44,7 +44,7 @@ class Client:
         return self._client.post('create_collection',
                                  json={'api_key': self._api_key, 'name': collection_name,
                                        dist_func: dist_func,
-                                       dimensions: dimensions}).json()
+                                       dimensions: dimensions}).text
 
     def list_collections(self, collection_name: str) -> Any:
         """
