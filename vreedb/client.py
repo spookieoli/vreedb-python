@@ -16,7 +16,7 @@ class Client:
         self._api_key = api_key
 
     def search(self, collection_name: str, limit: Optional[int] = None, vector: List[Union[int, float]] = None,
-               filter: List[Optional[Dict]] = None, index: Optional[Dict] = None) -> str:
+               filter: List[Optional[Dict]] = None, index: Optional[Dict] = None) -> Dict[str, Any]:
         """
         Perform a search operation with the specified parameters.
 
@@ -28,12 +28,13 @@ class Client:
         :return: The search results. (Any)
 
         """
-        return self._client.post('search',
+        resp = self._client.post('search',
                                  json={'api_key': self._api_key, 'collection_name': collection_name, 'limit': limit,
                                        'vector': vector,
-                                       'filter': filter, 'index': index}).text
+                                       'filter': filter, 'index': index})
+        return {"response": resp, "value": resp.text}
 
-    def create_collection(self, collection_name: str, dist_func: str, dimensions: int) -> str:
+    def create_collection(self, collection_name: str, dist_func: str, dimensions: int) -> Dict[str, Any]:
         """
         Create a collection
         :param collection_name: a name for the collection
@@ -41,30 +42,33 @@ class Client:
         :param dimensions: number of dimensions
         :return: collection dict
         """
-        return self._client.post('create_collection',
+        resp = self._client.post('createcollection',
                                  json={'api_key': self._api_key, 'name': collection_name,
-                                       dist_func: dist_func,
-                                       dimensions: dimensions}).text
+                                       "dist_func": dist_func,
+                                       "dimensions": dimensions})
+        return {"response": resp, "value": resp.text}
 
-    def list_collections(self, collection_name: str) -> Any:
+    def list_collections(self, collection_name: str) -> Dict[str, Any]:
         """
         Gets a collection info object
         :param collection_name: name of the collection
         :return: collection dict
         """
-        return self._client.post('listcollections', json={'api_key': self._api_key}).json()
+        resp = self._client.post('listcollections', json={'api_key': self._api_key})
+        return {"response": resp, "value": resp.json()}
 
-    def delete_collection(self, collection_name: str) -> Any:
+    def delete_collection(self, collection_name: str) -> Dict[str, Dict]:
         """
         Delete a collection
         :param collection_name: name of the collection
         :return: collection dict
         """
-        return self._client.post('deletecollection',
-                                 json={'api_key': self._api_key, 'collection_name': collection_name}).json()
+        resp = self._client.post('deletecollection',
+                                 json={'api_key': self._api_key, 'collection_name': collection_name})
+        return {"response": resp, "value": resp.json()}
 
     def add_point(self, collection_name: str, vector: List[Union[int, float]], payload: Optional[Dict],
-                  wait: bool) -> Any:
+                  wait: bool) -> Dict[str, Dict]:
         """
          Add a point to the collection
         :param collection_name: name of the collection
@@ -73,11 +77,12 @@ class Client:
         :param wait: wait for reply or not
         :return: collection dict
         """
-        return self._client.post('addpoint', json={'api_key': self._api_key, 'collection_name': collection_name,
-                                                   'vector': vector, 'payload': payload, 'wait': wait}).json()
+        resp = self._client.post('addpoint', json={'api_key': self._api_key, 'collection_name': collection_name,
+                                                   'vector': vector, 'payload': payload, 'wait': wait})
+        return {"response": resp, "value": resp.json()}
 
     def add_point_batch(self, collection_name: str, vectors: List[Union[int, float]],
-                        payloads: Optional[List[Dict]], ids: Optional[List[str]]) -> Any:
+                        payloads: Optional[List[Dict]], ids: Optional[List[str]]) -> Dict[str, Dict]:
         """
         :param collection_name: A string representing the name of the collection where the points will be added.
         :param vectors: A list of integers or floats representing the vectors of the points to be added.
@@ -90,19 +95,21 @@ class Client:
         for idx, v in enumerate(vectors):
             points.append({'vector': v, 'id': ids[idx], 'payload': payloads[idx]})
 
-        return self._client.post('addpointbatch',
+        resp = self._client.post('addpointbatch',
                                  json={'api_key': self._api_key, 'collection_name': collection_name,
                                        'points': points}).json()
+        return {"response": resp, "value": resp.json()}
 
-    def classify(self, collection_name: str, classifier_name: str, vector: List[Union[int, float]]) -> Any:
+    def classify(self, collection_name: str, classifier_name: str, vector: List[Union[int, float]]) -> Dict[str, Dict]:
         """
         :param collection_name: The name of the collection.
         :param classifier_name: The name of the classifier.
         :param vector: A list of numerical values representing the input vector to be classified.
         :return: The result of the classification.
         """
-        return self._client.post('classify', json={'api_key': self._api_key, 'collection_name': collection_name,
+        resp = self._client.post('classify', json={'api_key': self._api_key, 'collection_name': collection_name,
                                                    'classifier_name': classifier_name, 'vector': vector}).json()
+        return {"response": resp, "value": resp.text}
 
 
 def _parse_host(host: Optional[str]) -> str:
