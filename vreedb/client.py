@@ -16,8 +16,10 @@ class Client:
         self._api_key = api_key
 
     def search(self, collection_name: str, limit: Optional[int] = None, vector: List[Union[int, float]] = None,
-               filter: List[Optional[Dict]] = None, index: Optional[Dict] = None, get_vectors: bool = False,
-               get_id: bool = False) -> Dict[str, Any]:
+               filter: List[Optional[Dict]] = None, max_distance_percent: Optional[float] = 0,
+               index: Optional[Dict] = None,
+               get_vectors: Optional[bool] = False,
+               get_id: Optional[bool] = False) -> Dict[str, Any]:
         """
         Perform a search operation with the specified parameters.
         :param collection_name: The name of the collection to search in. (str)
@@ -25,6 +27,7 @@ class Client:
         :param vector: The input vector for similarity search. (List[Union[int, float]])
         :param filter: The filter conditions to apply to the search. (List[Optional[Dict]])
         :param index: The index option to use for the search. (Optional[Dict])
+        :param max_distance_percent: The maximum distance percent to search for (float)
         :param get_vectors: Whether to return the vectors. (Optional[bool])
         :param get_id: Whether to return the ids. (Optional[bool])
         :return: The search results. (Any)
@@ -34,6 +37,7 @@ class Client:
                                        'vector': vector,
                                        'filter': filter,
                                        'index': index,
+                                       'max_distance_percent': max_distance_percent,
                                        'get_vectors': get_vectors,
                                        'get_id': get_id})
         return {"response": resp, "value": resp.text}
