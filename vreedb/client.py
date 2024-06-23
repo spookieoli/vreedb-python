@@ -64,27 +64,27 @@ class Client:
                                        "dimensions": dimensions})
         return {"response": resp, "value": resp.text}
 
-    def list_collections(self, collection_name: str) -> Dict[str, Any]:
+    def list_collections(self) -> Dict[str, Any]:
         """
-        Gets a collection info object
+        Lists all Collections
         :param collection_name: name of the collection
         :return: collection dict
         """
         resp = self._client.post('listcollections', json={'api_key': self._api_key})
         return {"response": resp, "value": resp.json()}
 
-    def delete_collection(self, collection_name: str) -> Dict[str, Dict]:
+    def delete_collection(self, collection_name: str) -> Dict[str, str]:
         """
         Delete a collection
         :param collection_name: name of the collection
         :return: collection dict
         """
-        resp = self._client.post('deletecollection',
-                                 json={'api_key': self._api_key, 'collection_name': collection_name})
-        return {"response": resp, "value": resp.json()}
+        resp = self._client.post('delete',
+                                 json={'api_key': self._api_key, 'name': collection_name})
+        return {"response": resp, "value": resp.text}
 
     def add_point(self, collection_name: str, vector: List[Union[int, float]], payload: Optional[Dict],
-                  wait: bool) -> Dict[str, Dict]:
+                  wait: bool = False) -> Dict[str, str]:
         """
          Add a point to the collection
         :param collection_name: name of the collection
@@ -95,7 +95,7 @@ class Client:
         """
         resp = self._client.post('addpoint', json={'api_key': self._api_key, 'collection_name': collection_name,
                                                    'vector': vector, 'payload': payload, 'wait': wait})
-        return {"response": resp, "value": resp.json()}
+        return {"response": resp, "value": resp.text}
 
     def add_point_batch(self, collection_name: str, vectors: List[Union[int, float]],
                         payloads: Optional[List[Dict]], ids: Optional[List[str]]) -> Dict[str, Dict]:
