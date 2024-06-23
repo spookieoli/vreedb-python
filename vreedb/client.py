@@ -16,22 +16,26 @@ class Client:
         self._api_key = api_key
 
     def search(self, collection_name: str, limit: Optional[int] = None, vector: List[Union[int, float]] = None,
-               filter: List[Optional[Dict]] = None, index: Optional[Dict] = None) -> Dict[str, Any]:
+               filter: List[Optional[Dict]] = None, index: Optional[Dict] = None, get_vectors: bool = False,
+               get_id: bool = False) -> Dict[str, Any]:
         """
         Perform a search operation with the specified parameters.
-
         :param collection_name: The name of the collection to search in. (str)
         :param limit: The maximum number of results to return. (Optional[int])
         :param vector: The input vector for similarity search. (List[Union[int, float]])
         :param filter: The filter conditions to apply to the search. (List[Optional[Dict]])
         :param index: The index option to use for the search. (Optional[Dict])
+        :param get_vectors: Whether to return the vectors. (Optional[bool])
+        :param get_id: Whether to return the ids. (Optional[bool])
         :return: The search results. (Any)
-
         """
         resp = self._client.post('search',
                                  json={'api_key': self._api_key, 'collection_name': collection_name, 'limit': limit,
                                        'vector': vector,
-                                       'filter': filter, 'index': index})
+                                       'filter': filter,
+                                       'index': index,
+                                       'get_vectors': get_vectors,
+                                       'get_id': get_id})
         return {"response": resp, "value": resp.text}
 
     def create_collection(self, collection_name: str, dist_func: str, dimensions: int) -> Dict[str, Any]:
