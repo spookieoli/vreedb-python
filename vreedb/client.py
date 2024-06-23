@@ -1,6 +1,8 @@
 import urllib.parse
 import httpx
 from typing import Optional, Any, List, Union, Dict
+import sys
+import platform
 
 
 class Client:
@@ -10,6 +12,12 @@ class Client:
         :param host: a host [optional]
         :param timeout: None
         """
+
+        # check if Pythonversion is ge 3.10
+        pv = sys.version_info
+        if pv[0] == 3 and pv[1] < 10:
+            print("NOTE: you are running a incompatible version of python3")
+            return
 
         # create client
         self._client = httpx.Client(base_url=_parse_host(host), timeout=timeout)
