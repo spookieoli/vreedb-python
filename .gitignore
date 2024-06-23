@@ -18,11 +18,13 @@ lib/
 lib64/
 parts/
 sdist/
+venv/
 var/
 wheels/
 share/python-wheels/
 *.egg-info/
 .venv/
+.idea/
 .installed.cfg
 *.egg
 MANIFEST
